@@ -29,9 +29,9 @@ def download_instagram_post(url, cookies):
         post_shortcode = url.split("/p/")[1].split("/")[0]
         post = instaloader.Post.from_shortcode(loader.context, post_shortcode)
 
-        # Get the image URL
-        post_image_url = post.url
-        return post_image_url
+        # Get all image URLs (for carousel posts)
+        image_urls = [node.url for node in post.get_images()]
+        return image_urls
     except Exception as e:
         print(f"[✘] Failed to download post: {e}")
         return None
@@ -47,15 +47,15 @@ def download():
     if not cookies:
         return jsonify({"error": "No cookies provided"}), 400
 
-    image_url = download_instagram_post(url, cookies)
+    image_urls = download_instagram_post(url, cookies)
 
-    if image_url:
+    if image_urls:
         return jsonify({
-            "message": "[✔] Image downloaded successfully!",
-            "download_link": image_url
+            "message": "[✔] Images downloaded successfully!",
+            "download_links": image_urls
         })
     else:
-        return jsonify({"error": "Failed to download the post image"}), 400
+        return jsonify({"error": "Failed to download the post images"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
