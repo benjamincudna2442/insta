@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "insta_api.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/download",
+      "dest": "/insta_api.py"
+    }
+  ],
+  "env": {
+    "FLASK_ENV": "production"
+  }
+}
