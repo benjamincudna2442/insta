@@ -26,11 +26,20 @@ def download_instagram_post(url, cookies):
     loader.context._session = session
 
     try:
+        # Extract the shortcode from the URL
         post_shortcode = url.split("/p/")[1].split("/")[0]
+        print(f"Fetching post with shortcode: {post_shortcode}")
+
+        # Fetch the post from Instagram
         post = instaloader.Post.from_shortcode(loader.context, post_shortcode)
 
-        # Get all image URLs (for carousel posts)
+        # Check if the post is a carousel (multiple images)
         image_urls = [node.url for node in post.get_images()]
+        print(f"Found {len(image_urls)} images in the post")
+
+        if len(image_urls) == 0:
+            raise ValueError("No images found in the post")
+
         return image_urls
     except Exception as e:
         print(f"[✘] Failed to download post: {e}")
