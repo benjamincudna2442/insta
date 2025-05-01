@@ -18,11 +18,17 @@ def get_cookies_from_txt(file_path):
 
 def download_instagram_post(url, cookies):
     loader = instaloader.Instaloader(dirname_pattern='downloads', save_metadata=False)
+
+    # Create a custom session and add the cookies
+    session = requests.Session()
+    session.cookies.update(cookies)
+
+    # Set the session for instaloader context
+    loader.context._session = session  # This is how you inject the custom session into instaloader
+
     try:
         post_shortcode = url.split("/p/")[1].split("/")[0]
         post = instaloader.Post.from_shortcode(loader.context, post_shortcode)
-        # Ensure cookies are used during the download
-        loader.context.session.cookies.update(cookies)
         loader.download_post(post, target="insta_post")
         return f"[✔] Downloaded: {post_shortcode}"
     except Exception as e:
